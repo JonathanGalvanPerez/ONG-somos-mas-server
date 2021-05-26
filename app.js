@@ -5,9 +5,12 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const cors = require('cors')
 require('dotenv').config()
+require('./db');
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
+
+const port = process.env.PORT ? process.env.PORT : 3000
 
 const app = express();
 app.use(cors())
@@ -41,4 +44,9 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
+
+
+app.listen(3001 , () =>{
+    console.log('Servidor inicializado!');
+})
 module.exports = app;
