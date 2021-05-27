@@ -1,6 +1,8 @@
-const router = require('express').Router()
-const bcrypt = require('bcryptjs')
-const { body, validationResult } = require('express-validator')
+const router = require("express").Router();
+const bcrypt = require("bcryptjs");
+const { body, validationResult } = require("express-validator");
+const { User, Sequelize } = require("../models");
+const Op = Sequelize.Op;
 
 // solamente para prueba ------------------------------------------
 /*
@@ -31,15 +33,23 @@ const createUser = async () => {
 createUser()
 */
 
-
 /* GET users listing. */
-router.get('/', function (req, res, next) {
-  res.send('respond with a resource');
+
+router.get("/", async (req, res) => {
+  try {
+    const users = await User.findAll();
+    res.send(users);
+  } catch (error) {
+    res.send(error);
+  }
 });
 
-router.post('/auth/login',
-  body('email').isEmail(),
-  body('password').isLength({ min: 5 }),
+/* POST Login route */
+
+router.post(
+  "/auth/login",
+  body("email").isEmail(),
+  body("password").isLength({ min: 5 }),
   async (req, res) => {
     try {
       const errors = validationResult(req);
@@ -47,23 +57,59 @@ router.post('/auth/login',
         return res.status(400).json({ errors: errors.array() });
       }
       const user = await User.findOne({
-        where: { email: req.body.email }
-      })
+        where: { email: req.body.email },
+      });
       if (user) {
-        const equals = await bcrypt.compare(req.body.password, user.password)
+        const equals = await bcrypt.compare(req.body.password, user.password);
         if (equals) {
-          res.status(200).json(user)
+          res.status(200).json(user);
         } else {
-          res.status(400).json({ ok: false })
+          res.status(400).json({ ok: false });
         }
-
       } else {
-        res.status(400).json({ ok: false })
+        res.status(400).json({ ok: false });
       }
     } catch (e) {
       console.error(e.message);
-      res.status(413).send({ "Error": e.message });
+      res.status(413).send({ Error: e.message });
     }
-  })
+  }
+);
+
+/* POST Register route */
+
+router.post(
+  "/auth/register",
+  body("firstName")
+    .not()
+    .isEmpty()
+    .withMessage("The name must contain at least 2 characters"),
+  body("lastName")
+    .not()
+    .isEmpty()
+    .withMessage("The lastname must contain at least 2 characters"),
+  body("email").isEmail(),
+  body("password").isLength({ min: 5 }),
+  async (req, res) => {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+      }
+      const { email, password, firstName, lastName } = req.body;
+      const hash = await bcrypt.hash(password, 10);
+      const user = await User.create({
+        email,
+        firstName,
+        lastName,
+        password: hash,
+      });
+      res.status(201).json(user);
+    } catch (e) {
+      console.error(e.message);
+      res.status(409).send({ Error: e.message });
+    }
+  }
+);
 
 module.exports = router;
