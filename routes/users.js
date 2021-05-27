@@ -1,3 +1,5 @@
+
+const {User} = require('../db');
 const router = require('express').Router()
 const bcrypt = require('bcryptjs')
 const { body, validationResult } = require('express-validator')
@@ -31,11 +33,26 @@ const createUser = async () => {
 createUser()
 */
 
+router.delete('/:userID', async (req, res) =>{
+  try {
+      let userID = req.params.userID
+      //Colocar el model correspondiente cuando se cree el modelo permanente
+      let user = await User.findAll({
+          where:{id: userID}
+      });
+      if(user.length === 0) throw new Error('El usuario que se quiere eliminar no existe');
 
-/* GET users listing. */
-router.get('/', function (req, res, next) {
-  res.send('respond with a resource');
-});
+      await User.destroy({
+          where : {id: userID}
+      });
+      res.json({succes:'El usuario se a Borrado correctamente'})
+
+  } catch (e) {
+      console.error(e.message);   
+      res.status(413).send({"Error": e.message});
+  }
+  
+})
 
 router.post('/auth/login',
   body('email').isEmail(),
@@ -65,5 +82,6 @@ router.post('/auth/login',
       res.status(413).send({ "Error": e.message });
     }
   })
+
 
 module.exports = router;

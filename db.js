@@ -1,7 +1,6 @@
 const Sequelize = require('sequelize')
 
-
-
+const UsersModel = require('./models/users')
 
 const sequelize = new Sequelize('ONG', 'root', '',{
     host:'localhost',
@@ -9,6 +8,8 @@ const sequelize = new Sequelize('ONG', 'root', '',{
     
 });
 
+
+const User = UsersModel(sequelize,Sequelize );
 
 
 
@@ -18,5 +19,7 @@ sequelize.sync({force:false})
     })
 
     module.exports ={
+
+        User
         
     }
