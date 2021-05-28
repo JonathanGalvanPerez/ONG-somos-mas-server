@@ -37,21 +37,21 @@ function tokenGeneration(user, res) {
 //OT34-33...fin
 
 // solamente para prueba ------------------------------------------
-
-/* const Sequelize = require('sequelize')
-const userModel = require('../models/user')
+/* 
+const Sequelize = require("sequelize");
+const userModel = require("../models/user");
 
 const connection = {
-  "username": 'root',
-  "password": '',
-  "database": 'blog_ong',
-  "host": 'localhost',
-  "dialect": "mysql"
-}
+  username: "root",
+  password: "",
+  database: "blog_ong",
+  host: "localhost",
+  dialect: "mysql",
+};
 
-const sequelize = new Sequelize(connection)
-const User = userModel(sequelize, Sequelize) */
-
+const sequelize = new Sequelize(connection);
+const User = userModel(sequelize, Sequelize);
+ */
 // const createUser = async () => {
 //   sequelize.sync({ force: false })
 //   const allUsers = await User.findAll()
