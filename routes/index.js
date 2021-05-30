@@ -6,7 +6,6 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
-
 // test route for send email
 router.post('/test', sendMail,(req, res)=>{
     res.send('nodemailer')

@@ -1,7 +1,7 @@
 const { response } = require('express');
 const nodemailer = require('nodemailer');
 
- async function sendEmail(req, res, next) {
+async function sendEmail(req, res, next) {
 
     const senderEmail = nodemailer.createTransport({
         service: process.env.NODEMAILER_SENDER_SERVICE,
@@ -11,7 +11,8 @@ const nodemailer = require('nodemailer');
         }
     });
 
-    const { emailTo, subject, message} = req.body;
+
+    const { emailTo, subject, message } = req.body;
 
     const mailOptions = {
         from: process.env.NODEMAILER_SENDER_USER,
@@ -19,16 +20,12 @@ const nodemailer = require('nodemailer');
         subject: subject,
         text: message
     };
-    console.log(mailOptions)
-
 
     try {
-        const info = await senderEmail.sendMail(mailOptions);
-        res.status(200).json({ ok: info.response });
+        await senderEmail.sendMail(mailOptions);
         next()
-
-    } catch (error) { 
-        console.error(error.message);
+    } catch (error) {
+        res.status(500).send({ error: error.message });
     }
 
 }
