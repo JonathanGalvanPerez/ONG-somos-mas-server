@@ -5,13 +5,13 @@ const router = express.Router();
 
 const organizationdDataPath = path.join(__dirname, '../public/json/organization_data.json');
 
-router.get("/public", async (req, res) => {
+router.get("/1/public", async (req, res) => {
     try {
         const data = fs.readFileSync(organizationdDataPath, 'utf8');
         const parsedData = JSON.parse(data);
         res.status(200).json({
             name: parsedData.name,
-            image: path.join(__dirname, parsedData.image),
+            image: parsedData.image,
             phone: parsedData.phone,
             address: parsedData.address,
             welcomeText: parsedData.welcomeText

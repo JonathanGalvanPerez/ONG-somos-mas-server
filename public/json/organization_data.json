@@ -1,6 +1,6 @@
 {
     "name": "Somos Más",
-    "image": "../public/images/LOGO-SOMOS-MAS.png",
+    "image": "/images/LOGO-SOMOS-MAS.png",
     "phone": "1160112988",
     "address": "direccion 123",
     "welcomeText": "Este es un mensaje de bienvenida!"
