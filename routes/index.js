@@ -1,5 +1,5 @@
 var express = require('express');
-const sendMail = require('../middlewares/sendMail');
+const sendEmail = require('../middlewares/sendEmail');
 var router = express.Router();
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -7,7 +7,7 @@ router.get('/', function(req, res, next) {
 });
 
 // test route for send email
-router.post('/test', sendMail,(req, res)=>{
+router.post('/test', sendEmail,(req, res)=>{
     res.send('nodemailer')
 })
 module.exports = router;

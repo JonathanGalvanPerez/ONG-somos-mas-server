@@ -1,4 +1,3 @@
-const { response } = require('express');
 const nodemailer = require('nodemailer');
 
 async function sendEmail(req, res, next) {
