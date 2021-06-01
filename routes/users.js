@@ -154,7 +154,7 @@ router.post(
         firstName,
         lastName,
         password: hash,
-        roleId: Role.Admin
+        roleId: Role.User
       });
       tokenGeneration(user, res);
     } catch (e) {
