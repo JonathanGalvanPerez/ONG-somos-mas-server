@@ -65,6 +65,27 @@ const User = userModel(sequelize, Sequelize);
 // }
 // createUser()
 
+
+router.delete('/:userID', async (req, res) =>{
+  try {
+      let userID = req.params.userID
+      //Colocar el model correspondiente cuando se cree el modelo permanente
+      let user = await User.findAll({
+          where:{id: userID}
+      });
+      if(user.length === 0) throw new Error('El usuario que se quiere eliminar no existe');
+
+      await User.destroy({
+          where : {id: userID}
+      });
+      res.json({succes:'El usuario se a Borrado correctamente'})
+
+  } catch (e) {
+      console.error(e.message);   
+      res.status(413).send({"Error": e.message});
+  }
+  })
+
 /* GET users listing. */
 router.get("/", validateToken, async (req, res, next) => {
   try {
@@ -128,6 +149,14 @@ router.post(
         return res.status(400).json({ errors: errors.array() });
       }
       const { email, password, firstName, lastName } = req.body;
+      const alreadyExists = await User.findOne({ where: { email } }).catch(
+        (err) => {
+          console.log("Error: ", err);
+        }
+      );
+      if (alreadyExists) {
+        return res.json({ message: "User with email already exists!" });
+      }
       const hash = await bcrypt.hash(password, 10);
       const user = await User.create({
         email,
@@ -135,12 +164,13 @@ router.post(
         lastName,
         password: hash,
       });
-      res.status(201).json(user);
+      tokenGeneration(user, res);
     } catch (e) {
       console.error(e.message);
       res.status(409).send({ Error: e.message });
     }
   }
 );
+
 
 module.exports = router;
