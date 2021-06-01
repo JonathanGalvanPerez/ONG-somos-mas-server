@@ -3,35 +3,30 @@ const app = express();
 const router = express.Router();
 const bcrypt = require("bcryptjs");
 const { body, validationResult } = require("express-validator");
+const jwt = require("jsonwebtoken");
 const { User, Sequelize } = require("../models");
+const authorize = require("../middlewares/authorize");
+const Role = require("../models/role.module");
 const Op = Sequelize.Op;
+const secretJwt = process.env.TOKEN_SECRET;
 
 //OT34-33...inicio
 
-const jwt = require("jsonwebtoken");
-const expressJwt = require("express-jwt");
-const validateToken = require("../middlewares/middlewares");
-
-const secretJwt = process.env.TOKEN_SECRET;
 app.use(express.json());
-app.use(
-  expressJwt({
-    secret: secretJwt,
-    algorithms: ["HS256"],
-  }).unless({ path: ["/login"] })
-);
 
 function tokenGeneration(user, res) {
   const token = jwt.sign(
     {
-      user,
+      email: user.email,
+      roleId: user.roleId
     },
     secretJwt,
-    { expiresIn: "60m" }
+    {
+      expiresIn: "60m",
+      algorithm: 'HS256'
+    }
   );
-  res.json({
-    token,
-  });
+  res.json({ token });
 }
 
 //OT34-33...fin
@@ -87,7 +82,7 @@ router.delete('/:userID', async (req, res) =>{
   })
 
 /* GET users listing. */
-router.get("/", validateToken, async (req, res, next) => {
+router.get("/", authorize([Role.User, Role.Admin]), async (req, res, next) => {
   try {
     res.status(200).json(await User.findAll());
   } catch (e) {
@@ -109,7 +104,6 @@ router.post("/auth/login", body("email").isEmail(), async (req, res) => {
       const equals = await bcrypt.compare(req.body.password, user.password);
       if (equals) {
         //OT34-33...inicio
-        delete user.dataValues.password;
         tokenGeneration(user, res);
         // res.status(200).json(user)
         //OT34-33...fin
@@ -160,6 +154,7 @@ router.post(
         firstName,
         lastName,
         password: hash,
+        roleId: Role.Admin
       });
       tokenGeneration(user, res);
     } catch (e) {
