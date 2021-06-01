@@ -65,6 +65,27 @@ const User = userModel(sequelize, Sequelize);
 // }
 // createUser()
 
+
+router.delete('/:userID', async (req, res) =>{
+  try {
+      let userID = req.params.userID
+      //Colocar el model correspondiente cuando se cree el modelo permanente
+      let user = await User.findAll({
+          where:{id: userID}
+      });
+      if(user.length === 0) throw new Error('El usuario que se quiere eliminar no existe');
+
+      await User.destroy({
+          where : {id: userID}
+      });
+      res.json({succes:'El usuario se a Borrado correctamente'})
+
+  } catch (e) {
+      console.error(e.message);   
+      res.status(413).send({"Error": e.message});
+  }
+  })
+
 /* GET users listing. */
 router.get("/", validateToken, async (req, res, next) => {
   try {
@@ -147,5 +168,6 @@ router.post(
     }
   }
 );
+
 
 module.exports = router;
