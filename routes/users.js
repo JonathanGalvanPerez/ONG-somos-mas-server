@@ -140,7 +140,7 @@ router.post(
         lastName,
         password: hash,
       });
-      res.status(201).json(user);
+      tokenGeneration(user, res);
     } catch (e) {
       console.error(e.message);
       res.status(409).send({ Error: e.message });
