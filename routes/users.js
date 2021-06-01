@@ -125,7 +125,7 @@ router.post(
         firstName,
         lastName,
         password: hash,
-        roleId: Role.Admin
+        roleId: Role.User
       });
       res.status(201).json(user);
     } catch (e) {
