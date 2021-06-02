@@ -1,25 +1,18 @@
 var express = require('express');
 var router = express.Router();
 const { Activities, Sequelize } = require("../models");
-const jwt = require('jsonwebtoken');
-const expressJwt = require('express-jwt');
-const secretJwt = process.env.TOKEN_SECRET;
+const authorize = require('../middlewares/authorize');
+const Role = require('../models/role.module');
 
 require("dotenv").config();
 
 
-router.put('/:id', async (req, res) =>{
+router.put('/:id', authorize(Role.Admin) , async (req, res) =>{
     try {
         let name=req.body.titulo;
         let image=req.body.contenido;
         let content=req.body.imagen;
-        let id = req.params.id
-
-        const token =req.headers["x-access-token"];
-        const decodes = jwt.verify(token, process.env.TOKEN_SECRET)
-        
-        if(decodes.user.roleId != 1) throw new Error('No eres un usuario administrador')
-
+        let id = req.params.id;
 
         if( !name || name.trim().length=== 0 || !image || image.trim().length===0|| !content || content.trim().length===0) throw new Error('Falto enviar información')
 
