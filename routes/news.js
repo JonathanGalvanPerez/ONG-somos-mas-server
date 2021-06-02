@@ -1,29 +1,43 @@
-const router = require('express').Router();
-const {Entries} = require('../db');
+const router = require("express").Router();
 
+const { Entry, Sequelize } = require("../models");
+const Op = Sequelize.Op;
 
+router.get("/", async (req, res) => {
+  try {
+    //Se realiza consulta a la tabla correspondiente
+    let news = await Entry.findAll({
+      where: { type: "news" },
+    });
+    if (news.length === 0) throw new Error("No existe ningún news");
 
+    res.json(news);
+  } catch (error) {
+    console.error("Error");
 
+    res.status(413).send("Error");
+  }
+});
+/* For test the delete route  */
+router.post("/", async (req, res) => {
+  try {
+    let newCreated = await Entry.create(req.body);
+    res.json(newCreated);
+  } catch (error) {
+    console.error("Error");
+  }
+});
 
-    router.get('/', async (req, res) =>{
-    try {
-        
-        //Se realiza consulta a la tabla correspondiente
-        let news = await Entries.findAll( {
-            where:{type:"news"}
-        } );
-        if(news.length === 0) throw new Error('No existe ningún news');
-        
-        res.json(news) ;
-
-    } catch (error) {
-        console.error('Error');   
-        
-        res.status(413).send("Error");
-    }
-    });  
-
-
-
+router.delete("/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    await Entry.destroy({
+      where: { id },
+    });
+    res.sendStatus(204);
+  } catch (err) {
+    res.status(404).send({ Error: err.message });
+  }
+});
 
 module.exports = router;

@@ -10,7 +10,7 @@ const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/users");
 const contactsRouter = require("./routes/contacts");
 const organizationsRouter = require("./routes/organizations");
-const newsRouter = require('./routes/news');
+const newsRouter = require("./routes/news");
 
 const app = express();
 app.use(cors());
@@ -28,7 +28,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/organizations", organizationsRouter);
-app.use('/news', newsRouter);
+app.use("/news", newsRouter);
 app.use("/contacts", contactsRouter);
 
 // catch 404 and forward to error handler
@@ -47,9 +47,7 @@ app.use(function (err, req, res, next) {
   res.render("error");
 });
 
-
-
-app.listen(port , () =>{
-    console.log('Servidor inicializado!');
-})
+app.listen(port, () => {
+  console.log("Servidor inicializado!");
+});
 module.exports = app;
