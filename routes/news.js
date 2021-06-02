@@ -46,7 +46,6 @@ router.post("/news", async (req, res) => {
     if (newsCreated) {
       return res.json(newsCreated);
     }
-    
   } catch (error) {
     console.error("Error");
     res.status(500).json({
