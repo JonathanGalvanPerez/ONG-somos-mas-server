@@ -37,38 +37,55 @@ function tokenGeneration(user, res) {
 //OT34-33...fin
 
 // solamente para prueba ------------------------------------------
-/* 
-const Sequelize = require("sequelize");
-const userModel = require("../models/user");
 
-const connection = {
-  username: "root",
-  password: "",
-  database: "blog_ong",
-  host: "localhost",
-  dialect: "mysql",
-};
+// const Sequelize = require("sequelize");
+// const userModel = require("../models/user");
+// const user = require("../models/user");
 
-const sequelize = new Sequelize(connection);
-const User = userModel(sequelize, Sequelize);
- */
+// const connection = {
+//   username: process.env.DB_USER,
+//   password: process.env.DB_PASSWORD,
+//   database: process.env.DB_NAME,
+//   host: process.env.DB_HOST,
+//   dialect: "mysql",
+// };
+
+// const sequelize = new Sequelize(connection);
+// const User = userModel(sequelize, Sequelize);
+
 // const createUser = async () => {
-//   sequelize.sync({ force: false })
-//   const allUsers = await User.findAll()
-//   const hashPassword = bcrypt.hashSync('12345', 10)
-//   if (allUsers.length === 0) {
-//     User.create({
-//       firstName: 'Pedro', lastName: 'Suarez',
-//       email: 'pedro@pedro.com', password: hashPassword
-//     });
+//   try {
+//     sequelize.sync({ force: false });
+//     const allUsers = await User.findAll();
+//     const hashPassword = bcrypt.hashSync("12345", 10);
+//     if (allUsers.length === 0) {
+//       User.create({
+//         firstName: "Pedro",
+//         lastName: "Suarez",
+//         email: "pedro@pedro.com",
+//         password: hashPassword,
+//       });
+//     }
+//   } catch (error) {
+//     console.log("el error  es : ", error);
 //   }
-// }
-// createUser()
+// };
+// createUser();
 
 /* GET users listing. */
 router.get("/", validateToken, async (req, res, next) => {
   try {
     res.status(200).json(await User.findAll());
+  } catch (e) {
+    console.error(e.message);
+    res.status(413).send({ Error: e.message });
+  }
+});
+
+router.get("/auth/me", validateToken, async (req, res, next) => {
+  try {
+    const user = await User.findByPk(req.userId);
+    res.status(200).json(user);
   } catch (e) {
     console.error(e.message);
     res.status(413).send({ Error: e.message });
@@ -90,7 +107,7 @@ router.post("/auth/login", body("email").isEmail(), async (req, res) => {
         //OT34-33...inicio
         delete user.dataValues.password;
         tokenGeneration(user, res);
-        // res.status(200).json(user)
+        //res.status(200).json(user);
         //OT34-33...fin
       } else {
         res.status(400).json({ ok: false });
