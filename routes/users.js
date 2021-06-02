@@ -17,7 +17,7 @@ app.use(express.json());
 function tokenGeneration(user, res) {
   const token = jwt.sign(
     {
-      email: user.email,
+      userId: user.id,
       roleId: user.roleId
     },
     secretJwt,
@@ -98,9 +98,9 @@ router.get("/", authorize([Role.User, Role.Admin]), async (req, res, next) => {
   }
 });
 
-router.get("/auth/me", validateToken, async (req, res, next) => {
+router.get("/auth/me", authorize(Role.User), async (req, res, next) => {
   try {
-    const user = await User.findByPk(req.userId);
+    const user = await User.findByPk(req.user.userId);
     res.status(200).json(user);
   } catch (e) {
     console.error(e.message);
