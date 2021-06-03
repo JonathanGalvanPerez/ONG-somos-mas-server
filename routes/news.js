@@ -31,7 +31,6 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-/* For test the delete route  */
 router.post("/news", async (req, res) => {
   const { name, image, content, type } = req.params;
   try {
@@ -39,10 +38,11 @@ router.post("/news", async (req, res) => {
       name,
       image,
       content,
-      type
+      type: 'news'
     }, {
       fields: ['name', 'image', 'content', 'type']
     });
+
     if (newsCreated) {
       return res.json(newsCreated);
     }
