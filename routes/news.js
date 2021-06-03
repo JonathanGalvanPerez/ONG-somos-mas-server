@@ -32,7 +32,7 @@ router.delete("/:id", async (req, res) => {
 });
 
 router.post("/news", async (req, res) => {
-  const { name, image, content, type } = req.params;
+  const { name, image, content, type } = req.body;
   try {
     let newsCreated = await Entry.create({
       name,
