@@ -122,8 +122,10 @@ router.post("/auth/login", body("email").isEmail(), async (req, res) => {
     const user = await User.findOne({
       where: { email: req.body.email },
     });
+    
     if (user) {
       const equals = await bcrypt.compare(req.body.password, user.password);
+      console.log(equals);
       if (equals) {
         //OT34-33...inicio
         delete user.dataValues.password;
@@ -141,6 +143,7 @@ router.post("/auth/login", body("email").isEmail(), async (req, res) => {
     res.status(413).send({ Error: e.message });
   }
 });
+
 
 /* POST Register route */
 

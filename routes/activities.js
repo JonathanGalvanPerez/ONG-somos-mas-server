@@ -8,6 +8,7 @@ const secretJwt = process.env.TOKEN_SECRET;
 require("dotenv").config();
 
 
+
 router.put('/:id', async (req, res) =>{
     try {
         let name=req.body.titulo;
@@ -15,11 +16,11 @@ router.put('/:id', async (req, res) =>{
         let content=req.body.imagen;
         let id = req.params.id
 
+
         const token =req.headers["x-access-token"];
         const decodes = jwt.verify(token, process.env.TOKEN_SECRET)
         
         if(decodes.user.roleId != 1) throw new Error('No eres un usuario administrador')
-
 
         if( !name || name.trim().length=== 0 || !image || image.trim().length===0|| !content || content.trim().length===0) throw new Error('Falto enviar información')
 
@@ -35,11 +36,42 @@ router.put('/:id', async (req, res) =>{
         });
         res.json({succes:'Se ha modificado correctamente'})
 
+
     } catch (e) {
         console.error(e.message);   
         res.status(413).send({"Error": e.message});
     }
-});
+
+})
+
+
+router.post('/', async (req, res) =>{
+    try {
+        let name = req.body.name
+        let content = req.body.content
+
+        const token =req.headers["x-access-token"];
+        const decodes = jwt.verify(token, process.env.TOKEN_SECRET)
+        
+        if(decodes.user.roleId != 1) throw new Error('No eres un usuario administrador')
+
+        if( !name || name.trim().length=== 0 || !content || content.trim().length===0) throw new Error('Falto enviar información')
+
+        let post = await Activities.create(req.body);
+        
+        res.json(post)
+
+    } catch (e) {
+        console.error(e.message);   
+        res.status(413).send({"Error": e.message});
+    }
+    
+    });
+
+       
+
+
+
 
 
 
