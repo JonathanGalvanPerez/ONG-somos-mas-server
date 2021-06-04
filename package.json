@@ -21,6 +21,7 @@
     "morgan": "~1.9.1",
     "mysql2": "^2.2.5",
     "nodemailer": "^6.6.1",
+    "ong-server": "file:",
     "sequelize": "^6.6.2"
   },
   "devDependencies": {
