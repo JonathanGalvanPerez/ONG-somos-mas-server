@@ -10,7 +10,7 @@ const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/users");
 const contactsRouter = require("./routes/contacts");
 const organizationsRouter = require("./routes/organizations");
-const newsRouter = require("./routes/news");
+const newsRouter = require("./routes/news.routes");
 const activitiesRouter =require ('./routes/activities');
 
 const app = express();
