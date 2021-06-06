@@ -15,6 +15,26 @@ let senderEmail = nodemailer.createTransport({
     }
 });
 
+// Crear transporter de mails sin credenciales
+// ejecutar asincronamente antes de enviar mails
+const getCredentials = async () => {
+    // Obtener credenciales de prueba
+    let account = await nodemailer.createTestAccount()
+    console.log('Credentials obtained, sending message...');
+
+    // Crea SMTP transporter
+    senderEmail = nodemailer.createTransport({
+        host: account.smtp.host,
+        port: account.smtp.port,
+        secure: account.smtp.secure,
+        auth: {
+            user: account.user,
+            pass: account.pass
+        }
+    });
+    return;
+}
+
 // Conseguir nombre de organizacion
 const organizationName = organizationData.get().name;
 
@@ -34,12 +54,28 @@ const contactEmail = (req, _, next) => {
         imageUrl: 'https://i.ibb.co/C6wB4Zr/LOGO-SOMOS-MAS.jpg', // path.join(url, 'public/LOGO-SOMOS-MAS.png'),
         organizationName: organizationName
     });
+    
+    // Sin string-template
+    /*const { name, lastName, email, subject, message } = req.body;
+    const organizationName = organizationData.get().name;
+    const url = path.join(req.protocol, req.get('host'));
+
+    
+    html = html.replace(/{name}/g, name);
+    html = html.replace(/{lastName}/g, lastName);
+    html = html.replace(/{message}/g, message);
+    html = html.replace(/{url}/g, url);
+    //html = html.replace(/{imageUrl}/g, path.join(url, 'public/LOGO-SOMOS-MAS.png'));
+    html = html.replace(/{imageUrl}/g, 'https://i.ibb.co/C6wB4Zr/LOGO-SOMOS-MAS.jpg');
+    html = html.replace(/{organizationName}/g, organizationName);*/
+
     next();
 }
 
+
 const sendEmail = async (email, subject, html) => {
     const mailOptions = {
-        from: `${organizationName}<${process.env.NODEMAILER_USER}>`,
+        from: 'Recipient <recipient@example.com>',   // `${organizationName}<${process.env.NODEMAILER_USER}>`,
         to: email,
         subject: subject,
         html: html
@@ -47,11 +83,14 @@ const sendEmail = async (email, subject, html) => {
     await senderEmail.verify();
     console.log('Se conecto al mail!');
     const info = await senderEmail.sendMail(mailOptions);
+    // Preview del email solo disponible con cuenta de prueba de Ethereal
+    console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
     return;
 }
 
 
 module.exports = {
+    getCredentials,
     contactEmail,
     sendEmail
 }

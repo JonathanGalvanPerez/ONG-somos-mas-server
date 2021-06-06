@@ -9,7 +9,10 @@ router.get('/', function(req, res, next) {
 
 // test route for send email
 router.post('/test', contactEmail, (req, res)=>{
-  sendEmail(req.body.email, 'Hola ' + req.body.name, req.html)
+  getCredentials()
+    .then(() => {
+      return sendEmail(req.body.email, 'Hola ' + req.body.name, req.html);
+    })
     .then(() => res.send('termine de enviar el mail'))
     .catch(error => {
       console.log(error);
