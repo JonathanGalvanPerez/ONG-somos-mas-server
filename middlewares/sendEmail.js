@@ -1,5 +1,7 @@
 const nodemailer = require('nodemailer');
+const fs = require('fs');
 const path = require('path');
+const compile = require('string-template/compile');
 const organizationData = require('../services/organizationData');
 
 // Crear SMTP transporter con credenciales
@@ -13,24 +15,25 @@ let senderEmail = nodemailer.createTransport({
     }
 });
 
-
 // Conseguir nombre de organizacion
 const organizationName = organizationData.get().name;
 
+// Leer y compilar plantillas
+const contactHtml = fs.readFileSync(path.join(__dirname, '../emails/contact.html'), 'utf8');
+const contactTemplate = compile(contactHtml);
+// repetir por cada plantilla
+
 // Completar plantilla con los datos del usuario y la organizacion
 const contactEmail = (req, _, next) => {
-    const { name, lastName, email, subject, message } = req.body;
-    const organizationName = organizationData.get().name;
     const url = path.join(req.protocol, req.get('host'));
-    const url = path.join(req.protocol, req.get('host'));
-    html = html.replace(/{name}/g, name);
-    html = html.replace(/{lastName}/g, lastName);
-    html = html.replace(/{message}/g, message);
-    html = html.replace(/{url}/g, url);
-    //html = html.replace(/{imageUrl}/g, path.join(url, 'public/LOGO-SOMOS-MAS.png'));
-    html = html.replace(/{imageUrl}/g, 'https://i.ibb.co/C6wB4Zr/LOGO-SOMOS-MAS.jpg');
-    html = html.replace(/{organizationName}/g, organizationName);
-    req.html = html;
+    req.html = contactTemplate({
+        name: req.body.name,
+        lastName: req.body.lastName,
+        message: req.body.message,
+        url: url,
+        imageUrl: 'https://i.ibb.co/C6wB4Zr/LOGO-SOMOS-MAS.jpg', // path.join(url, 'public/LOGO-SOMOS-MAS.png'),
+        organizationName: organizationName
+    });
     next();
 }
 
