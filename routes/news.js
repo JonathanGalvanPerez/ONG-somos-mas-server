@@ -47,10 +47,40 @@ router.post("/news", async (req, res) => {
       return res.json(newsCreated);
     }
   } catch (error) {
-    console.error("Error");
+    console.log(error);
     res.status(500).json({
       message: 'Something goes wrong',
       data: {}
+    });
+  }
+});
+
+router.put('/news/:id', async (req, res) => {
+  const { id } = req.params;
+  const { name, image, content } = req.body;
+  try {
+    const news = await Entry.findAll({
+      attributes = [name, image, content],
+      where = {
+        id
+      }
+    });
+    
+  } catch (error) {
+    console.log(error);
+    res.status(404).json({
+      message: 'Something goes wrong',
+      data: {}
+    });
+  }
+  
+  if(news.length > 0) {
+    news.forEach(async element => {
+      await element.update({
+        name,
+        image,
+        content,
+      })
     });
   }
 });

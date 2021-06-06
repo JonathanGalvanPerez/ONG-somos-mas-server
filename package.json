@@ -6,6 +6,7 @@
     "start": "node index.js"
   },
   "dependencies": {
+    "aws-sdk": "^2.917.0",
     "bcryptjs": "^2.4.3",
     "cookie-parser": "~1.4.4",
     "cors": "^2.8.5",
@@ -20,6 +21,7 @@
     "morgan": "~1.9.1",
     "mysql2": "^2.2.5",
     "nodemailer": "^6.6.1",
+    "ong-server": "file:",
     "sequelize": "^6.6.2",
     "string-template": "^1.0.0"
   },
