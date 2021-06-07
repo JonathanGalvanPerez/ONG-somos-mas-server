@@ -2,17 +2,23 @@ var express = require('express');
 const authorize = require('../middlewares/authorize');
 var router = express.Router();
 const Role = require('../models/role.module');
-const { Sequelize, Contacts } = require('../models'); 
-Sequelize.Op;
+const controller = require('../controllers/contacts.controller');
+const { body, validationResult } = require('express-validator');
 
 /* GET Contacts. Role Administrator required */
-router.get('/', authorize(Role.Admin), async (req, res) => {
-    try {
-        res.status(200).json(await Contacts.findAll());
-    } catch (e) {
-        console.error(e.message);
-        res.status(413).send({ Error: e.message });
-    }
-});
+router.get('/', authorize(Role.Admin), controller.getAllContacts);
+
+/* POST Contacts. */
+router.post(
+  '/',
+  body('email').isEmail().withMessage('Campo email inválido'),
+  body('name').notEmpty().withMessage('Campo name inválido'),
+  (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+    else next();
+  },
+  controller.createContact
+);
 
 module.exports = router;
