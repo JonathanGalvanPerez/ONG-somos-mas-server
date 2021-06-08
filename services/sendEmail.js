@@ -46,10 +46,11 @@ const contactTemplate = compile(contactHtml);
 // Completar plantilla con los datos del usuario y la organizacion
 const contactEmail = (req, _, next) => {
     const url = path.join(req.protocol, req.get('host'));
+    const { name, message, phone } = req.body;
     req.html = contactTemplate({
-        name: req.body.name,
-        message: req.body.message,
-        phone: req.body.phone,
+        name,
+        message: message? message : 'Sin mensaje.',
+        phone: phone? phone : 'N/A',
         url: url,
         imageUrl: 'https://i.ibb.co/C6wB4Zr/LOGO-SOMOS-MAS.jpg', // path.join(url, 'public/LOGO-SOMOS-MAS.png'),
         organizationName: organizationName
