@@ -6,12 +6,12 @@ const organizationData = require('./organizationData');
 
 // Crear SMTP transporter con credenciales
 let senderEmail = nodemailer.createTransport({
-    host: process.env.NODEMAILER_HOST,
-    port: process.env.NODEMAILER_PORT,
+    host: process.env.NODEMAILER_SENDER_HOST,
+    port: process.env.NODEMAILER_SENDER_PORT,
     //secure: true,
     auth: {
-        user: process.env.NODEMAILER_USER,
-        pass: process.env.NODEMAILER_PASSWORD
+        user: process.env.NODEMAILER_SENDER_USER,
+        pass: process.env.NODEMAILER_SENDER_PASSWORD
     }
 });
 
