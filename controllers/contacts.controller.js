@@ -1,3 +1,4 @@
+const { getCredentials, sendEmail } = require('../services/sendEmail');
 const { Sequelize, Contact } = require('../models');
 Sequelize.Op;
 
@@ -16,9 +17,12 @@ exports.createContact = async (req, res) => {
   try {
     const { name, email, phone, message } = req.body;
 
-    const result = await Contact.create({ name, email, phone, message });
+    await Contact.create({ name, email, phone, message });
 
-    res.status(200).json(result);
+    await getCredentials(); // quitar si tiene acceso a un servicio SMTP
+    await sendEmail(req.body.email, 'Hola ' + req.body.name + '!', req.html);
+    
+    res.status(200).json({ ok: true });
   } catch (e) {
     console.error(e.message);
     res.status(413).send({ errors: [{ msg: e.message }] });
