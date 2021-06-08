@@ -2,7 +2,7 @@ const nodemailer = require('nodemailer');
 const fs = require('fs');
 const path = require('path');
 const compile = require('string-template/compile');
-const organizationData = require('../services/organizationData');
+const organizationData = require('./organizationData');
 
 // Crear SMTP transporter con credenciales
 let senderEmail = nodemailer.createTransport({
@@ -48,8 +48,8 @@ const contactEmail = (req, _, next) => {
     const url = path.join(req.protocol, req.get('host'));
     req.html = contactTemplate({
         name: req.body.name,
-        lastName: req.body.lastName,
         message: req.body.message,
+        phone: req.body.phone,
         url: url,
         imageUrl: 'https://i.ibb.co/C6wB4Zr/LOGO-SOMOS-MAS.jpg', // path.join(url, 'public/LOGO-SOMOS-MAS.png'),
         organizationName: organizationName
