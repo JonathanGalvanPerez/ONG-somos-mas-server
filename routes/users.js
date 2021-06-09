@@ -28,7 +28,7 @@ function tokenGeneration(user, res) {
   );
   res.json({
     token,
-    roleId
+    roleId: user.roleId
   });
 }
 
