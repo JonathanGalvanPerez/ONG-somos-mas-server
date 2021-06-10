@@ -9,13 +9,14 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Entry.hasOne(models.Category);
+      Entry.belongsTo(models.Category);
     }
   };
   Entry.init({
     name: DataTypes.STRING,
     image: DataTypes.STRING,
     content: DataTypes.TEXT,
+    categoryId: DataTypes.INTEGER,
     type: DataTypes.STRING
   }, {
     sequelize,

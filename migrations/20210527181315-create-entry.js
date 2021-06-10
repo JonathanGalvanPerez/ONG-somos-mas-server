@@ -16,6 +16,14 @@ module.exports = {
       },
       content: {
         type: Sequelize.TEXT
+      },{
+        categoryId: {
+          type:Sequelize.INTEGER,
+          references: {
+             model:"Categories",
+             key: id,
+          }
+        }
       },
       type: {
         type: Sequelize.STRING
