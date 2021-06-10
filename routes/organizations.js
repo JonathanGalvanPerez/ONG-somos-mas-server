@@ -1,6 +1,5 @@
-const fs = require('fs');
-const path = require('path');
 const express = require("express");
+const organizationData = require('../services/organizationData');
 const router = express.Router();
 
 const {OrganizationContact, Sequelize} = require("../models/");
