@@ -22,7 +22,8 @@
     "mysql2": "^2.2.5",
     "nodemailer": "^6.6.1",
     "ong-server": "file:",
-    "sequelize": "^6.6.2"
+    "sequelize": "^6.6.2",
+    "string-template": "^1.0.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.7",
