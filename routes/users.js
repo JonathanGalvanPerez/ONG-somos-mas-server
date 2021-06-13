@@ -26,10 +26,7 @@ function tokenGeneration(user, res) {
       algorithm: 'HS256'
     }
   );
-  res.json({
-    token,
-    roleId: user.roleId
-  });
+  res.json({ token });
 }
 
 //OT34-33...fin
