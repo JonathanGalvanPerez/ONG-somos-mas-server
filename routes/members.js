@@ -5,7 +5,7 @@ const authorize = require("../middlewares/authorize");
 const Role = require("../models/role.module");
 
 
-router.get('/', authorize(Role.Admin), async (req, res) =>{
+router.get('/', async (req, res) =>{
   try {
 
       let member = await members.findAll();
@@ -42,7 +42,7 @@ router.post('/', async (req, res) =>{
         let name = req.body.name
         
         //Validación de la informacion enviada
-        if( !name ||typeof name !='string'|| name.trim().length=== 0 ) throw new Error('Información enviada invalida')
+        if( !name ||typeof name !='string'|| name.trim().length=== 0 ) throw new Error('Information sent invalid')
         
         let post = await members.create(req.body);
         
