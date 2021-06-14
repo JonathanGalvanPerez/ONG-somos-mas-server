@@ -1,10 +1,10 @@
-var express = require('express');
+const express = require("express");
 const router = express.Router();
 const { members, Sequelize } = require("../models");
 const authorize = require("../middlewares/authorize");
 const Role = require("../models/role.module");
 
-router.get("/",  async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     let member = await members.findAll();
 
@@ -15,7 +15,24 @@ router.get("/",  async (req, res) => {
   }
 });
 
-router.put("/:id",  async (req, res) => {
+router.delete("/:id", authorize(Role.Admin), async (req, res) => {
+  const { id } = req.params;
+  try {
+    const member = await members.findOne({ where: { id } });
+
+    if (!member) {
+      res.json({ Error: "The member you want to delete does not exist" });
+    }
+    await members.destroy({
+      where: { id },
+    });
+    res.json({ Success: "Member deleted successfully" });
+  } catch (error) {
+    res.send({ Error: error.message });
+  }
+});
+
+router.put("/:id", authorize(Role.Admin), async (req, res) => {
   const { id } = req.params;
 
   try {
