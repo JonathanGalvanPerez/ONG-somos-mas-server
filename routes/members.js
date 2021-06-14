@@ -4,7 +4,7 @@ const { members, Sequelize } = require("../models");
 const authorize = require("../middlewares/authorize");
 const Role = require("../models/role.module");
 
-router.get("/", authorize(Role.Admin), async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     let member = await members.findAll();
 
@@ -32,7 +32,6 @@ router.delete("/:id", authorize(Role.Admin), async (req, res) => {
   }
 });
 
-module.exports = router;
 router.put("/:id", authorize(Role.Admin), async (req, res) => {
   const { id } = req.params;
 
@@ -49,3 +48,5 @@ router.put("/:id", authorize(Role.Admin), async (req, res) => {
     res.status(404).send({ Error: e.message });
   }
 });
+
+module.exports = router;

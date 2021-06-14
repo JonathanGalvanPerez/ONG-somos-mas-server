@@ -4,6 +4,7 @@ var router = express.Router();
 const Role = require('../models/role.module');
 const controller = require('../controllers/contacts.controller');
 const { body, validationResult } = require('express-validator');
+const { contactEmail } = require('../services/sendEmail');
 
 /* GET Contacts. Role Administrator required */
 router.get('/', authorize(Role.Admin), controller.getAllContacts);
@@ -18,6 +19,7 @@ router.post(
     if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
     else next();
   },
+  contactEmail,
   controller.createContact
 );
 
