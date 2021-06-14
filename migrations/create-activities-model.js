@@ -21,6 +21,14 @@ module.exports = {
       deletedAt: {
         type: Sequelize.TINYINT,
       },
+      createdAt: {
+        type: Sequelize.DATE,
+        defaultValue: new Date,
+      },
+      updatedAt: {
+        type: Sequelize.DATE,
+        defaultValue: new Date,
+      }
     });
   },
 
