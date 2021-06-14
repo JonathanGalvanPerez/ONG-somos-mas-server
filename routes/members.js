@@ -1,10 +1,10 @@
-const app = express();
+var express = require('express');
 const router = express.Router();
 const { members, Sequelize } = require("../models");
 const authorize = require("../middlewares/authorize");
 const Role = require("../models/role.module");
 
-router.get("/", authorize(Role.Admin), async (req, res) => {
+router.get("/",  async (req, res) => {
   try {
     let member = await members.findAll();
 
@@ -15,7 +15,7 @@ router.get("/", authorize(Role.Admin), async (req, res) => {
   }
 });
 
-router.put("/:id", authorize(Role.Admin), async (req, res) => {
+router.put("/:id",  async (req, res) => {
   const { id } = req.params;
 
   try {
