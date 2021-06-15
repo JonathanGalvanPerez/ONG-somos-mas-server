@@ -4,11 +4,22 @@ const { Category, Sequelize } = require("../models");
 const authorize = require("../middlewares/authorize");
 const Role = require("../models/role.module");
 
+router.get("/", async (req, res) => {
+  try {
+    const categoryNames = await Category.findAll({
+      attributes: ["name"],
+    });
+    res.json(categoryNames);
+  } catch (e) {
+    res.status(413).json({ error: e.message });
+  }
+});
+
 router.delete("/:id", authorize(Role.Admin), async (req, res) => {
   try {
-    const categoryId = req.params.id;
+    let categoryId = req.params.id;
 
-    const category = await Category.findAll({
+    let category = await Category.findAll({
       where: { id: categoryId },
     });
 
