@@ -20,4 +20,17 @@ router.post(
     controller.createTestimony
 );
 
+router.put('/:id', authorize(Role.Admin), (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) return res.status(400).json({errors: errors.array()});
+    else next();
+   }
+)
+
+router.delete('/:id', authorize(Role.Admin), (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) return res.status(400).json({errors: errors.array()})
+    else next();
+});
+
 module.exports = router;
