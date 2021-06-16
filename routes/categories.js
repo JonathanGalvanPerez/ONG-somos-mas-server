@@ -7,7 +7,7 @@ const Role = require("../models/role.module");
 router.get("/", async (req, res) => {
   try {
     const categoryNames = await Category.findAll({
-      attributes: ["id", "name"],
+      attributes: ["id", "name","description"],
     });
     res.json(categoryNames);
   } catch (e) {
