@@ -7,11 +7,31 @@ const Role = require('../models/role.module');
 require("dotenv").config();
 
 
+router.get('/:id', async (req, res) => {
+    try {
+        const result = await Activitie.findByPk(req.params.id);
+        res.status(200).send(result);
+    } catch (error) {
+        console.error(error.message);
+        res.status(413).send({ Error: error.message });
+    }
+    });
+    
+router.get('/', async (req, res) => {
+    try {
+        const result = await Activitie.findAll();
+        res.status(200).send(result);
+    } catch (error) {
+        console.error(error.message);
+        res.status(413).send({ Error: error.message });
+    }
+    });
+
 router.put('/:id', authorize(Role.Admin) , async (req, res) =>{
     try {
         let name=req.body.titulo;
-        let image=req.body.contenido;
-        let content=req.body.imagen;
+        let image=req.body.imagen;
+        let content=req.body.contenido;
         let id = req.params.id;
 
         if( !name || name.trim().length=== 0 || !image || image.trim().length===0|| !content || content.trim().length===0) throw new Error('Falto enviar información')
@@ -21,7 +41,6 @@ router.put('/:id', authorize(Role.Admin) , async (req, res) =>{
         });
 
         if(activity.length === 0) throw new Error('La Actividad ingresada no existe')
-
 
         activity = await Activities.update(req.body,{
             where : {id: id}
@@ -37,15 +56,12 @@ router.put('/:id', authorize(Role.Admin) , async (req, res) =>{
 })
 
 
-router.post('/', async (req, res) =>{
+router.post('/', authorize(Role.Admin), async (req, res) =>{
     try {
         let name = req.body.name
         let content = req.body.content
 
-        const token =req.headers["x-access-token"];
-        const decodes = jwt.verify(token, process.env.TOKEN_SECRET)
         
-        if(decodes.user.roleId != 1) throw new Error('No eres un usuario administrador')
 
         if( !name || name.trim().length=== 0 || !content || content.trim().length===0) throw new Error('Falto enviar información')
 
