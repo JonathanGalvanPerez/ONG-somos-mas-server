@@ -1,12 +1,12 @@
 const router = require("express").Router();
-const { Category, Sequelize } = require("../models");
+const { Categories, Sequelize } = require("../models");
 
 const authorize = require("../middlewares/authorize");
 const Role = require("../models/role.module");
 
 router.get("/", async (req, res) => {
   try {
-    const categoryNames = await Category.findAll({
+    const categoryNames = await Categories.findAll({
       attributes: ["id", "name","description"],
     });
     res.json(categoryNames);
@@ -27,7 +27,7 @@ router.post("/", authorize(Role.Admin), async (req, res) => {
         .status(413)
         .json({ error: "El nombre de la categoría debe ser un string" });
 
-    await Category.create({ name, description });
+    await Categories.create({ name, description });
     res.json({ success: "La categoría se ha creado correctamente" });
   } catch (e) {
     res.status(413).json({ error: e.message });
@@ -38,7 +38,7 @@ router.delete("/:id", authorize(Role.Admin), async (req, res) => {
   try {
     let categoryId = req.params.id;
 
-    let category = await Category.findAll({
+    let category = await Categories.findAll({
       where: { id: categoryId },
     });
 
@@ -47,7 +47,7 @@ router.delete("/:id", authorize(Role.Admin), async (req, res) => {
         .status(413)
         .json({ error: "La categoría que se quiere eliminar no existe" });
 
-    await Category.destroy({
+    await Categories.destroy({
       where: { id: categoryId },
     });
     res.json({ succes: "La categoría se ha borrado correctamente" });
