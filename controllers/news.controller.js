@@ -20,6 +20,10 @@ newsCtrl.getAllNews = async (req, res) => {
 newsCtrl.createNew = async (req, res) => {
     const { name, image, content, type } = req.body;
     try {
+
+
+      if( !name || name.trim().length=== 0 || !content || content.trim().length===0||!image ||image.trim().length===0) throw new Error('Falto enviar información')
+      
       let newsCreated = await Entry.create({
         name,
         image,
@@ -55,10 +59,18 @@ newsCtrl.getNew = async (req, res) => {
 newsCtrl.deleteNew = async (req, res) => {
     const { id } = req.params;
   try {
+
+    const news = await Entry.findAll({ where: { id: id } });
+      
+    if(news.length === 0)  throw new Error('The novelty entered does not exist')
+
     await Entry.destroy({
       where: { id },
     });
-    res.sendStatus(204);
+    
+
+    res.status(200).send('Correct elimination');
+
   } catch (err) {
     res.status(404).send({ Error: err.message });
   }
