@@ -68,7 +68,6 @@ newsCtrl.deleteNew = async (req, res) => {
       where: { id },
     });
     
-
     res.status(200).send('Correct elimination');
 
   } catch (err) {
