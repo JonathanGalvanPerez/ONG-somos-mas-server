@@ -31,62 +31,25 @@ function tokenGeneration(user, res) {
 
 //OT34-33...fin
 
-// solamente para prueba ------------------------------------------
 
-// const Sequelize = require("sequelize");
-// const userModel = require("../models/user");
-// const user = require("../models/user");
-
-// const connection = {
-//   username: process.env.DB_USER,
-//   password: process.env.DB_PASSWORD,
-//   database: process.env.DB_NAME,
-//   host: process.env.DB_HOST,
-//   dialect: "mysql",
-// };
-
-// const sequelize = new Sequelize(connection);
-// const User = userModel(sequelize, Sequelize);
-
-// const createUser = async () => {
-//   try {
-//     sequelize.sync({ force: false });
-//     const allUsers = await User.findAll();
-//     const hashPassword = bcrypt.hashSync("12345", 10);
-//     if (allUsers.length === 0) {
-//       User.create({
-//         firstName: "Pedro",
-//         lastName: "Suarez",
-//         email: "pedro@pedro.com",
-//         password: hashPassword,
-//       });
-//     }
-//   } catch (error) {
-//     console.log("el error  es : ", error);
-//   }
-// };
-// createUser();
-
-
-router.delete('/:userID', async (req, res) =>{
+router.delete('/:userID', async (req, res) => {
   try {
-      let userID = req.params.userID
-      //Colocar el model correspondiente cuando se cree el modelo permanente
-      let user = await User.findAll({
-          where:{id: userID}
-      });
-      if(user.length === 0) throw new Error('El usuario que se quiere eliminar no existe');
+    let userID = req.params.userID
+    let user = await User.findAll({
+      where: { id: userID }
+    });
+    if (user.length === 0) throw new Error('El usuario que se quiere eliminar no existe');
 
-      await User.destroy({
-          where : {id: userID}
-      });
-      res.json({succes:'El usuario se a Borrado correctamente'})
+    await User.destroy({
+      where: { id: userID }
+    });
+    res.json({ succes: 'El usuario se a Borrado correctamente' })
 
   } catch (e) {
-      console.error(e.message);   
-      res.status(413).send({"Error": e.message});
+    console.error(e.message);
+    res.status(413).send({ "Error": e.message });
   }
-  })
+})
 
 /* GET users listing. */
 router.get("/", authorize([Role.User, Role.Admin]), async (req, res, next) => {
@@ -108,35 +71,38 @@ router.get("/auth/me", authorize(Role.User), async (req, res, next) => {
   }
 });
 
-router.post("/auth/login", body("email").isEmail(), async (req, res) => {
-  try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-    const user = await User.findOne({
-      where: { email: req.body.email },
-    });
-    
-    if (user) {
-      const equals = await bcrypt.compare(req.body.password, user.password);
-      console.log(equals);
-      if (equals) {
-        //OT34-33...inicio
-        tokenGeneration(user, res);
-        //res.status(200).json(user);
-        //OT34-33...fin
+router.post("/auth/login",
+  body("email").isEmail(),
+  body("password").not().isEmpty(),
+  async (req, res) => {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+      }
+      const user = await User.findOne({
+        where: { email: req.body.email },
+      });
+
+      if (user) {
+        const equals = await bcrypt.compare(req.body.password, user.password);
+        console.log(equals);
+        if (equals) {
+          //OT34-33...inicio
+          tokenGeneration(user, res);
+          //res.status(200).json(user);
+          //OT34-33...fin
+        } else {
+          res.status(400).json({ ok: false });
+        }
       } else {
         res.status(400).json({ ok: false });
       }
-    } else {
-      res.status(400).json({ ok: false });
+    } catch (e) {
+      console.error(e.message);
+      res.status(413).send({ Error: e.message });
     }
-  } catch (e) {
-    console.error(e.message);
-    res.status(413).send({ Error: e.message });
-  }
-});
+  });
 
 
 /* POST Register route */
@@ -152,7 +118,7 @@ router.post(
     .isEmpty()
     .withMessage("The lastname must contain at least 2 characters"),
   body("email").isEmail(),
-  body("password").isLength({ min: 5 }),
+  body("password").trim().isLength({ min: 5 }),
   async (req, res) => {
     try {
       const errors = validationResult(req);
@@ -166,7 +132,7 @@ router.post(
         }
       );
       if (alreadyExists) {
-        return res.json({ message: "User with email already exists!" });
+        return res.status(409).json({ message: "User with email already exists!" });
       }
       const hash = await bcrypt.hash(password, 10);
       const user = await User.create({
