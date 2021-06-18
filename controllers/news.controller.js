@@ -100,15 +100,7 @@ newsCtrl.updateNew = async (req, res) => {
       res.status(413).send({"Error": e.message});
     }
     
-   /*  if(news.length > 0) {
-      news.forEach(async element => {
-        await element.update({
-          name,
-          image,
-          content,
-        })
-      });
-    } */
+   
 }
 
 
