@@ -83,16 +83,15 @@ newsCtrl.updateNew = async (req, res) => {
 
       if( !name || name.trim().length=== 0 || !content || content.trim().length===0||!image ||image.trim().length===0) throw new Error('I need to send information')
 
-       const news = await Entry.findAll({ where: { id: id } });
+      let news = await Entry.findAll({ where: { id: id } });
       
       if(news.length === 0)  throw new Error('The novelty entered does not exist') 
-
       
       news = await Entry.update(req.body,{
       where : {id: id}
       });
 
-      res.json({succes:'Se ha modificado correctamente'})
+      res.json({succes:'It has been modified correctly'})
     
       
     } catch (e) {
