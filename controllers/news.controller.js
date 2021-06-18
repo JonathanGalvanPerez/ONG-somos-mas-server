@@ -21,7 +21,6 @@ newsCtrl.createNew = async (req, res) => {
     const { name, image, content, type } = req.body;
     try {
 
-
       if( !name || name.trim().length=== 0 || !content || content.trim().length===0||!image ||image.trim().length===0) throw new Error('Falto enviar información')
       
       let newsCreated = await Entry.create({
@@ -43,8 +42,8 @@ newsCtrl.createNew = async (req, res) => {
         data: {}
       });
     }
-
 }
+
 newsCtrl.getNew = async (req, res) => {
     try {
         const news = await Entry.findOne({ where: { id: req.params.id } });
@@ -76,20 +75,32 @@ newsCtrl.deleteNew = async (req, res) => {
 }
 
 newsCtrl.updateNew = async (req, res) => {
-    const { name, image, content } = req.body;
+    
     try {
-      const news = await Post.findOne({ where: { id: req.params.id } });
-  
+
+      const { name,image,content } = req.body;
+      const { id } = req.params;
+
+      if( !name || name.trim().length=== 0 || !content || content.trim().length===0||!image ||image.trim().length===0) throw new Error('I need to send information')
+
+       const news = await Entry.findAll({ where: { id: id } });
       
-    } catch (error) {
-      console.log(error);
-      res.status(404).json({
-        message: 'Something goes wrong',
-        data: {}
+      if(news.length === 0)  throw new Error('The novelty entered does not exist') 
+
+      
+      news = await Entry.update(req.body,{
+      where : {id: id}
       });
+
+      res.json({succes:'Se ha modificado correctamente'})
+    
+      
+    } catch (e) {
+      console.log(e);
+      res.status(413).send({"Error": e.message});
     }
     
-    if(news.length > 0) {
+   /*  if(news.length > 0) {
       news.forEach(async element => {
         await element.update({
           name,
@@ -97,7 +108,7 @@ newsCtrl.updateNew = async (req, res) => {
           content,
         })
       });
-    }
+    } */
 }
 
 
