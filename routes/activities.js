@@ -9,7 +9,7 @@ require("dotenv").config();
 
 router.get('/:id', async (req, res) => {
     try {
-        const result = await Activitie.findByPk(req.params.id);
+        const result = await Activities.findByPk(req.params.id);
         res.status(200).send(result);
     } catch (error) {
         console.error(error.message);
@@ -19,7 +19,7 @@ router.get('/:id', async (req, res) => {
     
 router.get('/', async (req, res) => {
     try {
-        const result = await Activitie.findAll();
+        const result = await Activities.findAll();
         res.status(200).send(result);
     } catch (error) {
         console.error(error.message);
@@ -73,10 +73,8 @@ router.post('/', authorize(Role.Admin), async (req, res) =>{
         console.error(e.message);   
         res.status(413).send({"Error": e.message});
     }
-    
-    });
-
-       
+});
+        
 
 
 
