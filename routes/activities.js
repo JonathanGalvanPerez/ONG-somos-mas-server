@@ -74,8 +74,28 @@ router.post('/', authorize(Role.Admin), async (req, res) =>{
         res.status(413).send({"Error": e.message});
     }
 });
-        
 
+router.delete("/:id", authorize(Role.Admin), async (req, res) => {
+    try {
+        let activityId = req.params.id;
+    
+        let activity = await Activities.findAll({
+        where: { id: activityId },
+        });
+    
+        if (!activity || activity.length === 0)
+        res
+            .status(413)
+            .json({ error: "La categoría que se quiere eliminar no existe" });
+    
+        await Activities.destroy({
+        where: { id: activityId },
+        });
+        res.json({ succes: "La categoría se ha borrado correctamente" });
+    } catch (e) {
+        res.status(413).send({ error: e.message });
+    }
+}); 
 
 
 
