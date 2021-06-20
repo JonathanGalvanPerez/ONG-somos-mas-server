@@ -6,10 +6,10 @@ const Role = require("../models/role.module");
 
 router.get("/", async (req, res) => {
   try {
-    const categoryNames = await Categories.findAll({
-      attributes: ["id", "name","description"],
+    const categoriesData = await Categories.findAll({
+      attributes: ["id", "name", "description"],
     });
-    res.json(categoryNames);
+    res.json(categoriesData);
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
@@ -34,17 +34,17 @@ router.post("/", authorize(Role.Admin), async (req, res) => {
 
 router.delete("/:id", authorize(Role.Admin), async (req, res) => {
   try {
-    let categoryId = req.params.id;
+    let categoriesId = req.params.id;
 
-    let category = await Categories.findAll({
-      where: { id: categoryId },
+    let categories = await Categories.findAll({
+      where: { id: categoriesId },
     });
 
-    if (!category || category.length === 0)
+    if (!categories || categories.length === 0)
       res.status(400).json({ error: "La categoría que se quiere eliminar no existe" });
 
     await Categories.destroy({
-      where: { id: categoryId },
+      where: { id: categoriesId },
     });
     res.json({ success: "La categoría se ha borrado correctamente" });
   } catch (e) {
@@ -55,32 +55,30 @@ router.delete("/:id", authorize(Role.Admin), async (req, res) => {
 
 router.put("/:idCategory", authorize(Role.Admin) , async (req, res) =>{
   try {
-      let name=req.body.name;
-      let id = req.params.idCategory
-      
-      //Validate
-      if( !name || name.trim().length=== 0) {
-        res.status(400).send({ error: "El nombre de la categoria no puede estar vacio"})
-      }
+    let name=req.body.name;
+    let id = req.params.idCategory
+    
+    //Validate
+    if( !name || name.trim().length=== 0) {
+      res.status(400).send({ error: "El nombre de la categoria no puede estar vacio"})
+    }
 
-      
-      let category = await Categories.findAll({
-        where:{id: id}
-      });
-      console.log(category);
-      if(category.length === 0) {
-        res.status(404).send({ error: "No se ha encontrado la categoria que intenta modificar" })
-      }
+    
+    let category = await Categories.findAll({
+      where:{id: id}
+    });
+    console.log(category);
+    if(category.length === 0) {
+      res.status(404).send({ error: "No se ha encontrado la categoria que intenta modificar" })
+    }
 
-      category = await Categories.update(req.body,{
-        where : {id: id}
-      });
-      res.json({ success: "Se ha modificado correctamente" })
-
+    category = await Categories.update(req.body,{
+      where : {id: id}
+    });
+    res.json({ success: "Se ha modificado correctamente" })
   } catch (e) {
-      console.error(e.message);   
-      res.status(500).send({ error: e.message });
+    console.error(e.message);   
+    res.status(500).send({ error: e.message });
   }
-
-})
+});
 module.exports = router;
