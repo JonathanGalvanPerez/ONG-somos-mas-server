@@ -6,18 +6,14 @@ const Role = require("../models/role.module");
 
 router.get("/", async (req, res) => {
   try {
+    let member = await members.findAll();
 
-      let member = await members.findAll();
-      
-      res.json(member)
-
+    res.json(member);
   } catch (e) {
-      console.error(e.message);   
-      res.status(413).send({"Error": e.message});
+    console.error(e.message);
+    res.status(413).send({ Error: e.message });
   }
-  
-  });
-
+});
 
 router.delete("/:id", authorize(Role.Admin), async (req, res) => {
   const { id } = req.params;
@@ -53,23 +49,21 @@ router.put("/:id", authorize(Role.Admin), async (req, res) => {
   }
 });
 
-router.post('/', async (req, res) =>{
-    try {
-        let name = req.body.name
-        
-        //Validación de la informacion enviada
-        if( !name ||typeof name !='string'|| name.trim().length=== 0 ) throw new Error('Information sent invalid')
-        
-        let post = await members.create(req.body);
-        
-        res.json(post)
+router.post("/", async (req, res) => {
+  try {
+    let name = req.body.name;
 
-    } catch (e) {
-        console.error(e.message);   
-        res.status(413).send({"Error": e.message});
-    }
-    
-    });
+    //Validación de la informacion enviada
+    if (!name || typeof name != "string" || name.trim().length === 0)
+      throw new Error("Information sent invalid");
 
+    let post = await members.create(req.body);
+
+    res.json(post);
+  } catch (e) {
+    console.error(e.message);
+    res.status(413).send({ Error: e.message });
+  }
+});
 
 module.exports = router;
