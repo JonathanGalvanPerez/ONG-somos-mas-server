@@ -1,6 +1,17 @@
 const { testimonials, Sequelize } = require("../models");
 
 // POST /testimonials
+exports.getAllTestimonials = async (req, res) => {
+    try {
+        res.status(200).json(await testimonials.findAll());
+    } catch (e) {
+        console.error(e.message);
+        res.status(413).send({ Error: e.message });
+    }
+
+}
+
+
 exports.createTestimony = async (req, res) => {
     try {
         const { name, content, image } = req.body;

@@ -5,6 +5,8 @@ const Role = require('../models/role.module');
 const controller = require('../controllers/testimonials.controller');
 const { body, validationResult } = require('express-validator');
 
+// GET Testimonials for public access
+router.get('/', controller.getAllTestimonials)
 
 /* POST Testimonials. Role Administrator required */
 router.post(
