@@ -92,3 +92,23 @@ DELETE http://localhost:3000/users/{{$randomInt 1 10}}
 //            This return an success message
 
 ###
+
+
+// UPDATE USER
+PUT http://localhost:3000/users/7
+Content-Type: application/json
+
+{
+    "firstName": "Brian",
+    "lastName": "Retamar",
+    "password": "1234567",
+    "email": "demo@demo.com"
+}
+// * Response:  413 Payload Too Large
+//      Note: The user with the gave ID doesn't exists, some data is missing or not pass the validation
+//            This return an error message
+// * Response: 200 OK
+//      Note: User updated successfully
+//            This return an success message
+
+###
