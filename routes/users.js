@@ -18,12 +18,12 @@ function tokenGeneration(user, res) {
   const token = jwt.sign(
     {
       userId: user.id,
-      roleId: user.roleId
+      roleId: user.roleId,
     },
     secretJwt,
     {
       expiresIn: "60m",
-      algorithm: 'HS256'
+      algorithm: "HS256",
     }
   );
   res.json({ token, roleId: user.roleId });
@@ -50,6 +50,7 @@ router.delete('/:userID', async (req, res) => {
     res.status(413).send({ "Error": e.message });
   }
 })
+
 
 /* GET users listing. */
 router.get("/", authorize([Role.User, Role.Admin]), async (req, res, next) => {
@@ -95,6 +96,7 @@ router.post("/auth/login",
         } else {
           res.status(400).json({ ok: false });
         }
+
       } else {
         res.status(400).json({ ok: false });
       }
@@ -103,7 +105,6 @@ router.post("/auth/login",
       res.status(413).send({ Error: e.message });
     }
   });
-
 
 /* POST Register route */
 
@@ -140,7 +141,7 @@ router.post(
         firstName,
         lastName,
         password: hash,
-        roleId: Role.User
+        roleId: Role.User,
       });
       tokenGeneration(user, res);
     } catch (e) {

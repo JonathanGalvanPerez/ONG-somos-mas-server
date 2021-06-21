@@ -12,7 +12,7 @@ const contactsRouter = require("./routes/contacts");
 const organizationsRouter = require("./routes/organizations");
 const newsRouter = require("./routes/news.routes");
 const activitiesRouter = require("./routes/activities");
-const testimonialsRouter = require("./routes/testimonials");
+const testimonialsRouter = require("./routes/testimonials.routes");
 const membersRouter = require("./routes/members");
 const categoriesRouter = require("./routes/categories");
 

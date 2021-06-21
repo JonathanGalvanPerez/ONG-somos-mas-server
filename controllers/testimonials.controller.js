@@ -1,6 +1,15 @@
-const { testimonials, Sequelize } = require("../models");
+const { testimonials } = require("../models");
 
-// POST /testimonials
+exports.getAllTestimonials = async (req, res) => {
+    try {
+        res.status(200).json(await testimonials.findAll());
+    } catch (e) {
+        console.error(e.message);
+        res.status(413).send({ Error: e.message });
+    }
+
+}
+
 exports.createTestimony = async (req, res) => {
     try {
         const { name, content, image } = req.body;
@@ -15,37 +24,27 @@ exports.createTestimony = async (req, res) => {
 };
 
 exports.updateTestimony = async (req, res) => {
-    const { id } = req.params
-    const { name, content, image } = req.body;
-
-    const allTestimonials = await testimonials.findAll({
-        attributes: ['name', 'content', 'image'],
-        where: {
-            id
-        }
-    });
-    if (allTestimonials.length > 0) {
-        allTestimonials.forEach(async testimony => {
-            await testimony.update({
-                name,
-                content,
-                image
-            })
-        });
-    } else {
-        return res.status(404).json({ message: "Not found" })
+    const { name, image, content } = req.body;
+    try {
+        const testimony = await testimonials.findOne({ where: { id: req.params.id } });
+        await testimony.update({
+            name,
+            image,
+            content,
+        })
+        res.status(200).json({ message: 'updated successfully' });
+    } catch (error) {
+        console.log(error);
+        res.status(404).json({ message: 'Something goes wrong' });
     }
+
 
 }
 
 exports.deleteTestimony = async (req, res) => {
     try {
         const { id } = req.params;
-        const testimony = await testimonials.destroy({
-            where: {
-                id
-            }
-        });
+        await testimonials.destroy({ where: { id } });
         res.json({ message: "Testimony deleted succesfully" });
 
     } catch (error) {

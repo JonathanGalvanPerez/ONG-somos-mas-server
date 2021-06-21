@@ -8,7 +8,7 @@ const {OrganizationContact, Sequelize} = require("../models/");
 router.get("/1/public", async (req, res) => {
     try {
         const orgContact = await OrganizationContact.findAll(); //OT34-79
-        const data = organizationData.get();
+        const data = await organizationData.get();
 
         res.status(200).json({
             name: data.name,
