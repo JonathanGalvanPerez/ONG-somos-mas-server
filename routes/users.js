@@ -150,5 +150,56 @@ router.post(
   }
 );
 
+router.put('/:id', async (req, res) => {
+  try {
+    const { email, password, firstName, lastName } = req.body;
+    const id = req.params.id;
+
+    if (!firstName || firstName.trim().length === 0 ||
+      !email || email.trim().length === 0 ||
+      !lastName || lastName.trim().length === 0 ||
+      !password || password.trim().length === 0) throw new Error('Falto enviar información')
+
+    let user = await User.findAll({
+      where: { id: id }
+    });
+
+    if (user.length === 0) throw new Error('El usuario seleccionado no existe')
+
+    console.log(user[0].id)
+
+    user = await User.findAll({
+      where: { email: email }
+    });
+
+    if (user.length > 0) {
+      let result
+      for (i = 0; i < user.length; i++) {
+        result = user[i].id == id
+        console.log({ result }, user[i].id, { id })
+
+        if (!result) {
+          throw new Error('Ya existe un usuario con ese email')
+        }
+      }
+    }
+
+    const hash = await bcrypt.hash(password, 10);
+    user = await User.update({
+      email,
+      firstName,
+      lastName,
+      password: hash,
+    }, {
+      where: { id: id }
+    });
+    res.json({ succes: 'Se ha modificado correctamente' })
+
+  } catch (e) {
+    console.error(e.message);
+    res.status(413).send({ "Error": e.message });
+  }
+
+})
 
 module.exports = router;
