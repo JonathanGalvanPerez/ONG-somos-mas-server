@@ -18,12 +18,12 @@ function tokenGeneration(user, res) {
   const token = jwt.sign(
     {
       userId: user.id,
-      roleId: user.roleId
+      roleId: user.roleId,
     },
     secretJwt,
     {
       expiresIn: "60m",
-      algorithm: 'HS256'
+      algorithm: "HS256",
     }
   );
   res.json({ token, roleId: user.roleId });
@@ -67,26 +67,25 @@ function tokenGeneration(user, res) {
 // };
 // createUser();
 
-
-router.delete('/:userID', async (req, res) =>{
+router.delete("/:userID", async (req, res) => {
   try {
-      let userID = req.params.userID
-      //Colocar el model correspondiente cuando se cree el modelo permanente
-      let user = await User.findAll({
-          where:{id: userID}
-      });
-      if(user.length === 0) throw new Error('El usuario que se quiere eliminar no existe');
+    let userID = req.params.userID;
+    //Colocar el model correspondiente cuando se cree el modelo permanente
+    let user = await User.findAll({
+      where: { id: userID },
+    });
+    if (user.length === 0)
+      throw new Error("El usuario que se quiere eliminar no existe");
 
-      await User.destroy({
-          where : {id: userID}
-      });
-      res.json({succes:'El usuario se a Borrado correctamente'})
-
+    await User.destroy({
+      where: { id: userID },
+    });
+    res.json({ succes: "El usuario se a Borrado correctamente" });
   } catch (e) {
-      console.error(e.message);   
-      res.status(413).send({"Error": e.message});
+    console.error(e.message);
+    res.status(413).send({ Error: e.message });
   }
-  })
+});
 
 /* GET users listing. */
 router.get("/", authorize([Role.User, Role.Admin]), async (req, res, next) => {
@@ -117,7 +116,7 @@ router.post("/auth/login", body("email").isEmail(), async (req, res) => {
     const user = await User.findOne({
       where: { email: req.body.email },
     });
-    
+
     if (user) {
       const equals = await bcrypt.compare(req.body.password, user.password);
       console.log(equals);
@@ -137,7 +136,6 @@ router.post("/auth/login", body("email").isEmail(), async (req, res) => {
     res.status(413).send({ Error: e.message });
   }
 });
-
 
 /* POST Register route */
 
@@ -174,7 +172,7 @@ router.post(
         firstName,
         lastName,
         password: hash,
-        roleId: Role.User
+        roleId: Role.User,
       });
       tokenGeneration(user, res);
     } catch (e) {
