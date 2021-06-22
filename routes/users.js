@@ -182,4 +182,33 @@ router.post(
   }
 );
 
+router.put('/:id' , async (req, res) =>{
+  try {
+      let firstName=req.body.nombre;
+      let lastName=req.body.apellido;
+      let image=req.body.image;
+      let id = req.params.id;
+
+      if( !firstName || firstName.trim().length=== 0 || !image || image.trim().length===0|| !lastName || lastName.trim().length===0) throw new Error('Falto enviar información')
+
+      let user = await User.findAll({
+          where:{id: id}
+      });
+
+      if(user.length === 0) throw new Error('El usuario seleccionado no existe')
+
+      user = await User.update(req.body,{
+          where : {id: id}
+      });
+      res.json({succes:'Se ha modificado correctamente'})
+
+
+  } catch (e) {
+      console.error(e.message);   
+      res.status(413).send({"Error": e.message});
+  }
+
+})
+
+
 module.exports = router;
