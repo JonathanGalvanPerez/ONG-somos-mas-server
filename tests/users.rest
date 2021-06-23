@@ -1,0 +1,114 @@
+// This file can be tested using the vscode extension "REST Client"
+// https://github.com/Huachao/vscode-restclient
+
+
+
+// CREATE USER
+POST http://localhost:3000/users/auth/register 
+Content-Type: application/json
+
+{
+    "firstName": "Brian",
+    "lastName": "Retamar",
+    "password": "123456",
+    "email": "demo@demo.com"
+}
+// * Response: 400 Bad Request
+//      Note: Some data is missing or not pass the validation
+//            This return an array of errors
+// * Response: 409 Conflict
+//      Note: A User with that email already exists
+//            This return an error message
+// * Response: 200 OK
+//      Note: User created successfully
+//            This return the 'token' and 'roleId' of the User
+
+###
+
+
+// GET ALL USERS
+GET http://localhost:3000/users
+// * Response:  401 Unauthorized
+// Note: The client must send a valid authentication token for make the request
+
+###
+
+
+GET http://localhost:3000/users
+Authorization: Bearer xxx
+// * Response: 200 OK
+//      Note: The token must be valid, otherwise you will get a 401 response code
+//      This return an array of Users
+// * Response:  401 Unauthorized
+//      Note: The token is missing or is invalid
+// * Response:  413 Payload Too Large
+//      Note: A internal server error
+
+###
+
+
+// GET ACTIVE USER 
+GET http://localhost:3000/users/auth/me
+Authorization: Bearer xxx
+// * Response: 200 OK
+//      Note: The token must be valid, otherwise you will get a 401 response code
+//      This return the User JSON
+// * Response:  401 Unauthorized
+//      Note: The token is missing or is invalid
+// * Response:  413 Payload Too Large
+//      Note: A internal server error
+
+###
+
+
+// LOGIN USER
+POST http://localhost:3000/users/auth/login
+Content-Type: application/json
+
+{
+
+    "email": "demo@demo.com",
+    "password": "123456"
+}
+// * Response: 400 Bad Request
+//      Note: Some data is missing or not pass the validation
+//            This return an array of errors
+// * Response:  413 Payload Too Large
+//      Note: A internal server error
+// * Response: 200 OK
+//      Note: User authenticated successfully
+//            This return the 'token' and 'roleId' of the User
+
+###
+
+
+// DELETE USER
+DELETE http://localhost:3000/users/{{$randomInt 1 10}}
+// * Response:  413 Payload Too Large
+//      Note: The user with the gave ID doesn't exists or internal server error
+//            This return an error message
+// * Response: 200 OK
+//      Note: User deleted successfully
+//            This return an success message
+
+###
+
+
+// UPDATE USER
+PUT http://localhost:3000/users/7
+Content-Type: application/json
+
+{
+    "firstName": "Brian",
+    "lastName": "Retamar",
+    "password": "1234567",
+    "email": "demo@demo.com"
+}
+// * Response:  413 Payload Too Large
+//      Note: The user with the gave ID doesn't exists, some data is missing or not pass the validation
+//            This return an error message
+// * Response: 200 OK
+//      Note: User updated successfully
+//            This return an success message
+
+###
