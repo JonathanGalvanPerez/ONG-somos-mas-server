@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-const { Activities, Sequelize } = require("../models");
+const { Activity, Sequelize } = require("../models");
 const authorize = require('../middlewares/authorize');
 const Role = require('../models/role.module');
 
@@ -9,48 +9,40 @@ require("dotenv").config();
 
 router.get('/:id', async (req, res) => {
     try {
-        const result = await Activitie.findByPk(req.params.id);
+        const result = await Activity.findByPk(req.params.id);
         res.status(200).send(result);
     } catch (error) {
         console.error(error.message);
-        res.status(413).send({ Error: error.message });
+        res.status(500).send({ error: error.message });
     }
     });
     
 router.get('/', async (req, res) => {
     try {
-        const result = await Activitie.findAll();
+        const result = await Activity.findAll();
         res.status(200).send(result);
     } catch (error) {
         console.error(error.message);
-        res.status(413).send({ Error: error.message });
+        res.status(500).send({ error: error.message });
     }
     });
 
 router.put('/:id', authorize(Role.Admin) , async (req, res) =>{
     try {
-        let name=req.body.titulo;
-        let image=req.body.imagen;
-        let content=req.body.contenido;
         let id = req.params.id;
 
-        if( !name || name.trim().length=== 0 || !image || image.trim().length===0|| !content || content.trim().length===0) throw new Error('Falto enviar información')
-
-        let activity = await Activities.findAll({
-            where:{id: id}
-        });
-
-        if(activity.length === 0) throw new Error('La Actividad ingresada no existe')
-
-        activity = await Activities.update(req.body,{
+        let result = await Activity.update(req.body,{
             where : {id: id}
         });
-        res.json({succes:'Se ha modificado correctamente'})
+        // Update retorna una lista donde el primer elemento es el numero de filas afectadas
+        if(result[0]==0)
+            res.status(404).send({ error: 'La Actividad ingresada no existe' });
+        else
+            res.status(200).send({ success:'Se ha modificado correctamente' })
 
-
-    } catch (e) {
+    } catch (error) {
         console.error(e.message);   
-        res.status(413).send({"Error": e.message});
+        res.status(500).send({ error: e.message});
     }
 
 })
@@ -61,23 +53,35 @@ router.post('/', authorize(Role.Admin), async (req, res) =>{
         let name = req.body.name
         let content = req.body.content
 
-        
-
-        if( !name || name.trim().length=== 0 || !content || content.trim().length===0) throw new Error('Falto enviar información')
-
-        let post = await Activities.create(req.body);
-        
-        res.json(post)
+        if( !name || name.trim().length=== 0 || !content || content.trim().length===0)
+            res.status(400).end('Falto enviar información');
+        else {
+            let post = await Activity.create(req.body);
+            res.status(201).json(post)
+        }
 
     } catch (e) {
         console.error(e.message);   
-        res.status(413).send({"Error": e.message});
+        res.status(500).send({ error: e.message});
     }
-    
-    });
+});
 
-       
-
+router.delete("/:id", authorize(Role.Admin), async (req, res) => {
+    try {
+        let activityId = req.params.id;
+        let result = await Activity.destroy({
+            where: { id: activityId },
+        });
+        // Destroy retorna el numero de filas eliminadas
+        if(result === 0)
+            res.status(400).send({ error: "La actividad que se quiere eliminar no existe" });
+        else
+            res.json({ success: "La actividad se ha borrado correctamente" });
+    } catch (e) {
+        console.error(e.message);   
+        res.status(500).send({ error: e.message });
+    }
+}); 
 
 
 
