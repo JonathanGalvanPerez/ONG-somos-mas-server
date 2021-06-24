@@ -7,18 +7,19 @@ newsCtrl.getAllNews = async (req, res) => {
         let news = await Entry.findAll({
           where: { type: "news" },
         });
-        if (news.length === 0) throw new Error("No existe ningún news");
-    
-        res.json(news);
+        if (news.length === 0)
+          res.status(404).send({ error: "No existe ningún news" });
+        else
+          res.json(news);
       } catch (error) {
-        console.error("Error");
+        console.error(error);
     
-        res.status(413).send("Error");
+        res.status(500).send({ error: error.message});
       }
 
 }
 newsCtrl.createNew = async (req, res) => {
-    const { name, image, content, type } = req.body;
+    const { name, image, content, categoryId } = req.body;
     try {
 
       if( !name || name.trim().length=== 0 || !content || content.trim().length===0||!image ||image.trim().length===0) throw new Error('Falto enviar información')
@@ -27,50 +28,53 @@ newsCtrl.createNew = async (req, res) => {
         name,
         image,
         content,
+        categoryId,
         type: 'news'
-      }, {
-        fields: ['name', 'image', 'content', 'type']
       });
   
-      if (newsCreated) {
+      if (newsCreated)
         return res.json(newsCreated);
-      }
     } catch (error) {
-      console.log(error);
-      res.status(500).json({
-        message: 'Something goes wrong',
-        data: {}
-      });
+      console.error(error.message);
+      res.status(500).send({ message: 'Something goes wrong' });
     }
 }
 
 newsCtrl.getNew = async (req, res) => {
     try {
-        const news = await Entry.findOne({ where: { id: req.params.id } });
+      const news = await Entry.findOne({
+        where: { id: req.params.id },
+        include: {
+          association: 'category',
+          attributes: ['name']
+        }
+      });
+      if(news === null)
+        res.status(404).send({ error: 'The novelty entered does not exist'});
+      else
         res.json(news);
         
-      } catch (error) {
-        console.log(error);
-        res.status(404).json(error);
-      }
+    } catch (error) {
+      console.error(error.message);
+      res.status(404).json(error.message);
+    }
 }
 
 newsCtrl.deleteNew = async (req, res) => {
     const { id } = req.params;
   try {
 
-    const news = await Entry.findAll({ where: { id: id } });
-      
-    if(news.length === 0)  throw new Error('The novelty entered does not exist')
-
-    await Entry.destroy({
+    const result = await Entry.destroy({
       where: { id },
     });
-    
-    res.status(200).send('Correct elimination');
+    if(result === 0)
+      res.status(404).send({ error: 'The novelty entered does not exist' })
+    else
+      res.status(200).send({ success: 'Correct elimination' });
 
-  } catch (err) {
-    res.status(404).send({ Error: err.message });
+  } catch (error) {
+    console.error(error.message)
+    res.status(500).send({ error: error.message });
   }
 }
 
@@ -81,22 +85,21 @@ newsCtrl.updateNew = async (req, res) => {
       const { name,image,content } = req.body;
       const { id } = req.params;
 
-      if( !name || name.trim().length=== 0 || !content || content.trim().length===0||!image ||image.trim().length===0) throw new Error('I need to send information')
-
-      let news = await Entry.findAll({ where: { id: id } });
+      if( !name || name.trim().length=== 0 || !content || content.trim().length===0||!image ||image.trim().length===0)
+        res.status(400).send({ error: 'I need to send information' });
       
-      if(news.length === 0)  throw new Error('The novelty entered does not exist') 
-      
-      news = await Entry.update(req.body,{
+      const result = await Entry.update(req.body, {
       where : {id: id}
       });
+      if(result[0] === 0)
+        res.status(404).send({ error: 'The novelty entered does not exist'});
 
-      res.json({succes:'It has been modified correctly'})
+      res.json({ success:'It has been modified correctly' });
     
       
-    } catch (e) {
-      console.log(e);
-      res.status(413).send({"Error": e.message});
+    } catch (error) {
+      console.error(error);
+      res.status(500).send({ error: error.message});
     }
     
    
