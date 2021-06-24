@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Entry.belongsTo(models.Categories);
+      Entry.belongsTo(models.Categories, {as: 'category'});
     }
   }
   Entry.init(
@@ -17,7 +17,7 @@ module.exports = (sequelize, DataTypes) => {
       name: DataTypes.STRING,
       image: DataTypes.STRING,
       content: DataTypes.TEXT,
-      type: DataTypes.STRING,
+      type: DataTypes.STRING
     },
     {
       sequelize,
