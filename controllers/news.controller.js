@@ -22,7 +22,7 @@ newsCtrl.createNew = async (req, res) => {
     const { name, image, content, categoryId } = req.body;
     try {
 
-      if( !name || name.trim().length=== 0 || !content || content.trim().length===0||!image ||image.trim().length===0) throw new Error('Falto enviar información')
+      if( !name || name.trim().length=== 0 || !content ||!image ||image.trim().length===0) throw new Error('Falto enviar información')
       
       let newsCreated = await Entry.create({
         name,
@@ -33,7 +33,7 @@ newsCtrl.createNew = async (req, res) => {
       });
   
       if (newsCreated)
-        return res.json(newsCreated);
+        return res.status(201).json(newsCreated);
     } catch (error) {
       console.error(error.message);
       res.status(500).send({ message: 'Something goes wrong' });
