@@ -2,12 +2,17 @@ const express = require("express");
 const organizationData = require('../services/organizationData');
 const router = express.Router();
 
-const {OrganizationContact, Sequelize} = require("../models/");
+const {OrganizationContact, Slide, Sequelize} = require("../models/");
 
 
 router.get("/1/public", async (req, res) => {
     try {
-        const orgContact = await OrganizationContact.findAll(); //OT34-79
+        const orgContact = await OrganizationContact.findAll();
+        const slides = await Slide.findAll({
+            order: [
+                ['order', 'ASC']
+            ],
+        });
         const data = await organizationData.get();
 
         res.status(200).json({
@@ -16,7 +21,8 @@ router.get("/1/public", async (req, res) => {
             phone: data.phone,
             address: data.address,
             welcomeText: data.welcomeText,
-            orgContact
+            orgContact,
+            slides
         });
     } catch (e) {
         console.error(e.message);
