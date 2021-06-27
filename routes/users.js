@@ -62,7 +62,7 @@ router.get("/", authorize([Role.User, Role.Admin]), async (req, res, next) => {
   }
 });
 
-router.get("/auth/me", ([Role.User, Role.Admin]), async (req, res, next) => {
+router.get("/auth/me", authorize([Role.User, Role.Admin]), async (req, res, next) => {
   try {
     const user = await User.findByPk(req.user.userId);
     res.status(200).json(user);
