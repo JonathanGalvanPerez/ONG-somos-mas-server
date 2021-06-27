@@ -1,10 +1,10 @@
 // This file can be tested using the vscode extension "REST Client"
 // https://github.com/Huachao/vscode-restclient
 
-
+@baseUrl = http://localhost:3001
 
 // CREATE USER
-POST http://localhost:3000/users/auth/register 
+POST {{baseUrl}}/users/auth/register 
 Content-Type: application/json
 
 {
@@ -27,14 +27,14 @@ Content-Type: application/json
 
 
 // GET ALL USERS
-GET http://localhost:3000/users
+GET {{baseUrl}}/users
 // * Response:  401 Unauthorized
 // Note: The client must send a valid authentication token for make the request
 
 ###
 
 
-GET http://localhost:3000/users
+GET {{baseUrl}}/users
 Authorization: Bearer xxx
 // * Response: 200 OK
 //      Note: The token must be valid, otherwise you will get a 401 response code
@@ -48,7 +48,7 @@ Authorization: Bearer xxx
 
 
 // GET ACTIVE USER 
-GET http://localhost:3000/users/auth/me
+GET {{baseUrl}}/users/auth/me
 Authorization: Bearer xxx
 // * Response: 200 OK
 //      Note: The token must be valid, otherwise you will get a 401 response code
@@ -62,11 +62,10 @@ Authorization: Bearer xxx
 
 
 // LOGIN USER
-POST http://localhost:3000/users/auth/login
+POST {{baseUrl}}/users/auth/login
 Content-Type: application/json
 
 {
-
     "email": "demo@demo.com",
     "password": "123456"
 }
@@ -83,7 +82,7 @@ Content-Type: application/json
 
 
 // DELETE USER
-DELETE http://localhost:3000/users/{{$randomInt 1 10}}
+DELETE {{baseUrl}}/users/{{$randomInt 1 10}}
 // * Response:  413 Payload Too Large
 //      Note: The user with the gave ID doesn't exists or internal server error
 //            This return an error message
@@ -95,15 +94,15 @@ DELETE http://localhost:3000/users/{{$randomInt 1 10}}
 
 
 // UPDATE USER
-PUT http://localhost:3000/users/7
+PUT {{baseUrl}}/users/{{$randomInt 1 10}}
 Content-Type: application/json
 
 {
     "firstName": "Brian",
     "lastName": "Retamar",
-    "password": "1234567",
     "email": "demo@demo.com"
 }
+// password is optional
 // * Response:  413 Payload Too Large
 //      Note: The user with the gave ID doesn't exists, some data is missing or not pass the validation
 //            This return an error message
