@@ -26,7 +26,7 @@ function tokenGeneration(user, res) {
       algorithm: "HS256",
     }
   );
-  res.json({ token, roleId: user.roleId });
+  res.json({ token, roleId: user.roleId, userId: user.id });
 }
 
 //OT34-33...fin
@@ -62,7 +62,7 @@ router.get("/", authorize([Role.User, Role.Admin]), async (req, res, next) => {
   }
 });
 
-router.get("/auth/me", authorize(Role.User), async (req, res, next) => {
+router.get("/auth/me", ([Role.User, Role.Admin]), async (req, res, next) => {
   try {
     const user = await User.findByPk(req.user.userId);
     res.status(200).json(user);
@@ -151,15 +151,21 @@ router.post(
   }
 );
 
-router.put('/:id', async (req, res) => {
+router.put('/:id', body("email").isEmail(), async (req, res) => {
   try {
-    const { email, password, firstName, lastName } = req.body;
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { email, firstName, lastName } = req.body;
+    const password = req.body.password || null
     const id = req.params.id;
 
     if (!firstName || firstName.trim().length === 0 ||
       !email || email.trim().length === 0 ||
-      !lastName || lastName.trim().length === 0 ||
-      !password || password.trim().length === 0) throw new Error('Falto enviar información')
+      !lastName || lastName.trim().length === 0)
+      throw new Error('Falto enviar información')
 
     let user = await User.findAll({
       where: { id: id }
@@ -185,16 +191,29 @@ router.put('/:id', async (req, res) => {
       }
     }
 
-    const hash = await bcrypt.hash(password, 10);
-    user = await User.update({
-      email,
-      firstName,
-      lastName,
-      password: hash,
-    }, {
-      where: { id: id }
-    });
-    res.json({ succes: 'Se ha modificado correctamente' })
+    if (password != 'undefined' && password != null) {
+
+      const hash = await bcrypt.hash(password, 10);
+      user = await User.update({
+        email,
+        firstName,
+        lastName,
+        password: hash,
+      }, {
+        where: { id: id }
+      });
+      res.json({ succes: 'Se ha modificado correctamente' })
+    }
+    else {
+      user = await User.update({
+        email,
+        firstName,
+        lastName
+      }, {
+        where: { id: id }
+      });
+      res.json({ succes: 'Se ha modificado correctamente' })
+    }
 
   } catch (e) {
     console.error(e.message);
